@@ -3,164 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Barber VIP | Estilo & Distinción</title>
+    <title>Master Barber VIP | Reservas</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { 
             --gold: #d4af37; 
-            --deep-red: #8e1a1a; 
-            --dark-bg: #0a0a0a; 
             --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.9);
         }
 
         body { 
             font-family: 'Montserrat', sans-serif; 
-            background-color: var(--dark-bg); 
             margin: 0; 
-            color: #333; 
-            background-image: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
-        }
-        
-        /* HEADER CON ESTILO LUXURY */
-        header {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
+            /* AQUÍ ESTÁ TU FOTO DE FONDO ACLARADA */
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
                         url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
-            color: white;
-            padding: 100px 20px;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            padding: 60px 20px;
             text-align: center;
-            border-bottom: 4px solid var(--gold);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
         }
 
         header h1 { 
-            font-size: 3rem; 
+            font-size: 3.5rem; 
             margin: 0; 
-            letter-spacing: 8px; 
+            letter-spacing: 6px; 
             font-weight: 900; 
+            color: var(--white);
             text-transform: uppercase;
         }
 
         header p { 
             color: var(--gold); 
             font-weight: 700; 
-            letter-spacing: 4px; 
-            margin-top: 10px;
-            font-size: 1.2rem;
+            letter-spacing: 5px; 
+            font-size: 1.3rem;
         }
 
-        /* TARJETA DE RESERVA FLOTANTE */
         .booking-card {
-            max-width: 480px;
-            margin: -50px auto 60px;
-            background: var(--white);
-            border-radius: 25px;
-            padding: 40px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-            position: relative;
-            z-index: 10;
+            max-width: 450px;
+            margin: 0 auto 50px;
+            background: var(--glass); /* Efecto cristal suave */
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
         .section-title {
             text-align: center;
             font-weight: 900;
-            color: var(--dark-bg);
+            color: #111;
             text-transform: uppercase;
-            font-size: 1rem;
             margin-bottom: 25px;
-            letter-spacing: 1px;
-            border-bottom: 2px solid var(--gold);
-            display: inline-block;
-            width: 100%;
-            padding-bottom: 10px;
+            border-bottom: 3px solid var(--gold);
+            padding-bottom: 8px;
         }
 
-        /* INPUTS ESTILIZADOS */
-        label { font-weight: 700; font-size: 0.8rem; text-transform: uppercase; color: #666; margin-bottom: 5px; display: block; }
+        label { font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: #444; margin-bottom: 8px; display: block; }
         
         input, select {
             width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 2px solid #eee;
+            padding: 14px;
+            margin-bottom: 18px;
+            border: 2px solid #ddd;
             border-radius: 12px;
             font-family: inherit;
             font-size: 1rem;
-            transition: all 0.3s ease;
             box-sizing: border-box;
         }
 
-        input:focus, select:focus {
-            border-color: var(--gold);
-            outline: none;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
-        }
-
-        /* GRID DE HORAS */
         .time-slots {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin: 25px 0;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         .slot {
-            padding: 15px 5px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
+            padding: 12px 5px;
+            border: 2px solid #eee;
+            border-radius: 10px;
             text-align: center;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: #fcfcfc;
+            background: white;
+            transition: 0.3s;
         }
 
-        .slot:hover { border-color: var(--gold); background: #fffcf5; }
-
         .slot.selected {
-            background: var(--gold) !important;
-            color: white !important;
+            background: #111 !important;
+            color: var(--gold) !important;
             border-color: var(--gold);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            transform: scale(1.05);
         }
 
         .slot.disabled {
             background: #f0f0f0;
             color: #ccc;
             text-decoration: line-through;
-            cursor: not-allowed;
             border-color: #eee;
         }
 
-        /* BOTÓN DE CONFIRMACIÓN */
         .btn-confirm {
             width: 100%;
-            background: var(--dark-bg);
+            background: #111;
             color: var(--gold);
-            padding: 22px;
+            padding: 20px;
             border: 2px solid var(--gold);
             border-radius: 15px;
             font-weight: 900;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-top: 15px;
+            transition: 0.3s;
         }
 
         .btn-confirm:hover {
             background: var(--gold);
-            color: white;
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+            color: black;
         }
 
-        /* RESPONSIVO */
         @media (max-width: 500px) {
-            header h1 { font-size: 2.2rem; }
-            .booking-card { margin: -30px 15px 40px; padding: 25px; }
+            header h1 { font-size: 2.5rem; }
+            .booking-card { margin: 0 15px 40px; }
         }
     </style>
 </head>
@@ -172,26 +148,25 @@
 </header>
 
 <div class="booking-card">
-    <div class="section-title">Reserva tu Experiencia</div>
+    <div class="section-title">Reserva tu Cupo VIP</div>
 
-    <label>Barbero de Preferencia</label>
+    <label>Barbero</label>
     <select id="barbero" onchange="updateSchedule()">
-        <option value="Fabian Ortiz">Fabian Ortiz (Master)</option>
+        <option value="Fabian Ortiz">Fabian Ortiz</option>
         <option value="Andrés Silva">Andrés Silva</option>
     </select>
 
-    <label>Selecciona el Día</label>
+    <label>Día</label>
     <input type="date" id="fecha" onchange="updateSchedule()">
 
-    <label>Horarios Disponibles</label>
-    <div class="time-slots" id="timeSlots">
-        </div>
+    <label>Horas Disponibles</label>
+    <div class="time-slots" id="timeSlots"></div>
 
-    <label>Tus Datos</label>
+    <label>Tu Información</label>
     <input type="text" id="nombre" placeholder="Nombre completo">
     <input type="tel" id="telefono" placeholder="WhatsApp">
 
-    <button class="btn-confirm" onclick="enviarReserva()">Agendar Cita VIP</button>
+    <button class="btn-confirm" onclick="enviarReserva()">Confirmar Cita</button>
 </div>
 
 <script>
@@ -226,30 +201,28 @@
                 }
                 container.appendChild(div);
             });
-        } catch(e) { console.error("Error conexión"); }
+        } catch(e) { console.error("Error"); }
     }
 
     async function enviarReserva() {
         const nombre = document.getElementById('nombre').value;
         const fecha = document.getElementById('fecha').value;
-        if(!fecha || !timeSelected || !nombre) return alert("Por favor completa los datos");
-
-        const reserva = {
-            clienteNombre: nombre,
-            clienteTelefono: document.getElementById('telefono').value,
-            barbero: document.getElementById('barbero').value,
-            fecha: fecha,
-            hora: timeSelected
-        };
+        if(!fecha || !timeSelected || !nombre) return alert("Completa los datos");
 
         const res = await fetch(`${API_URL}/reservar`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(reserva)
+            body: JSON.stringify({
+                clienteNombre: nombre,
+                clienteTelefono: document.getElementById('telefono').value,
+                barbero: document.getElementById('barbero').value,
+                fecha: fecha,
+                hora: timeSelected
+            })
         });
 
         if(res.ok) {
-            alert("✅ ¡Cita Agendada con Éxito!");
+            alert("✅ ¡Cita Agendada!");
             location.reload();
         }
     }
