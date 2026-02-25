@@ -4,7 +4,7 @@ async function updateSchedule() {
     if(!fecha) return;
 
     // Pedimos al servidor las horas ocupadas y bloqueadas
-    const res = await fetch(`https://tu-app-en-render.onrender.com/disponibilidad?fecha=${fecha}&barbero=${barbero}`);
+    const res = await fetch(`https://mis-barberias.onrender.com/disponibilidad?fecha=${fecha}&barbero=${barbero}`);
     const data = await res.json();
     
     const container = document.getElementById('timeSlots');
@@ -30,3 +30,4 @@ async function updateSchedule() {
         container.appendChild(div);
     });
 }
+
