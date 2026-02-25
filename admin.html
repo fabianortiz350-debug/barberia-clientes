@@ -3,79 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Control | Master Barber</title>
+    <title>Panel de Dueño | Master Barber</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #d4af37; --dark: #0f0f0f; --red: #8e1a1a; }
-        body { font-family: 'Montserrat', sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
-        .admin-card { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h2 { color: var(--dark); border-left: 5px solid var(--gold); padding-left: 10px; }
-        label { font-weight: bold; display: block; margin-top: 15px; }
-        input, select { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
-        .grid-horas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
-        .hora-btn { 
-            padding: 10px; border: 1px solid #ddd; border-radius: 5px; text-align: center; 
-            cursor: pointer; font-weight: bold; background: #fff;
+        body { font-family: 'Montserrat', sans-serif; background: #121212; margin: 0; padding: 20px; color: white; }
+        
+        .admin-card { 
+            max-width: 500px; 
+            margin: 20px auto; 
+            background: #fff; 
+            padding: 25px; 
+            border-radius: 15px; 
+            color: #333;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
         }
-        .hora-btn.bloqueada { background: var(--red); color: white; border-color: var(--red); }
-        .instrucciones { font-size: 0.8rem; color: #666; margin-top: 20px; }
+
+        h2 { text-align: center; color: var(--dark); border-bottom: 3px solid var(--gold); padding-bottom: 10px; }
+        
+        label { font-weight: bold; display: block; margin-top: 15px; text-transform: uppercase; font-size: 0.8rem; color: #666; }
+        
+        input, select { 
+            width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; 
+            border: 2px solid #ddd; box-sizing: border-box; font-family: inherit; font-size: 1rem;
+        }
+
+        .grid-horas { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+            margin-top: 20px; 
+        }
+
+        .hora-btn { 
+            padding: 15px 5px; 
+            border: 2px solid #eee; 
+            border-radius: 8px; 
+            text-align: center; 
+            cursor: pointer; 
+            font-weight: bold; 
+            background: #f9f9f9;
+            transition: 0.3s;
+        }
+
+        /* ESTADO BLOQUEADO O RESERVADO */
+        .hora-btn.bloqueada { 
+            background: var(--red) !important; 
+            color: white !important; 
+            border-color: var(--red); 
+        }
+
+        .cliente-info { font-size: 0.7rem; display: block; font-weight: normal; margin-top: 4px; }
+
+        .leyenda { 
+            margin-top: 25px; 
+            padding: 10px; 
+            background: #eee; 
+            border-radius: 8px; 
+            font-size: 0.8rem; 
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
 <div class="admin-card">
-    <h2>Panel Administrador</h2>
-    <p>Selecciona fecha y toca una hora para <b>Bloquear/Liberar</b>.</p>
-
-    <label>Barbero</label>
+    <h2>CONTROL DE CITAS</h2>
+    
+    <label>Seleccionar Barbero</label>
     <select id="barbero" onchange="cargarEstado()">
         <option value="Fabian Ortiz">Fabian Ortiz</option>
         <option value="Andrés Silva">Andrés Silva</option>
     </select>
 
-    <label>Fecha a gestionar</label>
-    <input type="date" id="fechaAdmin" onchange="cargarEstado()" required>
+    <label>Seleccionar Fecha</label>
+    <input type="date" id="fechaAdmin" onchange="cargarEstado()">
 
     <div class="grid-horas" id="gridAdmin">
         </div>
 
-    <p class="instrucciones">🔴 Rojo = Bloqueado (El cliente no lo verá)<br>⚪ Blanco = Disponible</p>
+    <div class="leyenda">
+        <p>Toca una hora para <b>Bloquear / Liberar</b></p>
+        <span style="color:var(--red)">●</span> Bloqueado/Reservado | <span>○</span> Disponible
+    </div>
 </div>
 
 <script>
     const API_URL = "https://mis-barberias.onrender.com";
-    const horas = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"];
+    const horasArr = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"];
 
     async function cargarEstado() {
         const fecha = document.getElementById('fechaAdmin').value;
         const barbero = document.getElementById('barbero').value;
         if(!fecha) return;
 
-        const res = await fetch(`${API_URL}/disponibilidad?fecha=${fecha}&barbero=${barbero}`);
-        const data = await res.json();
-        
-        const container = document.getElementById('gridAdmin');
-        container.innerHTML = "";
-        
-        horas.forEach(h => {
-            const div = document.createElement('div');
-            div.className = "hora-btn";
-            div.innerText = h;
+        try {
+            const res = await fetch(`${API_URL}/disponibilidad?fecha=${fecha}&barbero=${barbero}`);
+            const data = await res.json();
             
-            // Si ya está bloqueada o reservada, marcar en rojo
-            if(data.ocupadas.includes(h) || data.bloqueadas.includes(h)) {
-                div.classList.add('bloqueada');
-            }
+            const container = document.getElementById('gridAdmin');
+            container.innerHTML = "";
+            
+            horasArr.forEach(h => {
+                const div = document.createElement('div');
+                div.className = "hora-btn";
+                div.innerText = h;
+                
+                // Marcamos si está ocupada (por reserva) o bloqueada (por ti)
+                const esOcupada = data.ocupadas.includes(h);
+                const esBloqueada = data.bloqueadas.includes(h);
 
-            div.onclick = () => toggleBloqueo(h, div.classList.contains('bloqueada'));
-            container.appendChild(div);
-        });
+                if(esOcupada || esBloqueada) {
+                    div.classList.add('bloqueada');
+                    if(esOcupada) {
+                        const span = document.createElement('span');
+                        span.className = "cliente-info";
+                        span.innerText = "RESERVADO";
+                        div.appendChild(span);
+                    }
+                }
+
+                div.onclick = () => toggleBloqueo(h, esBloqueada || esOcupada);
+                container.appendChild(div);
+            });
+        } catch(e) { alert("Error conectando con el servidor"); }
     }
 
-    async function toggleBloqueo(hora, estaBloqueada) {
+    async function toggleBloqueo(hora, actualmenteBloqueada) {
         const fecha = document.getElementById('fechaAdmin').value;
         const barbero = document.getElementById('barbero').value;
-        const estado = estaBloqueada ? 'L' : 'B'; // L=Liberar, B=Bloquear
+        const estado = actualmenteBloqueada ? 'L' : 'B'; // L = Liberar, B = Bloquear
 
         await fetch(`${API_URL}/admin/bloquear`, {
             method: 'POST',
@@ -83,8 +140,11 @@
             body: JSON.stringify({ fecha, hora, barbero, estado })
         });
         
-        cargarEstado(); // Refrescar
+        cargarEstado(); // Recargar la vista
     }
+
+    // Poner la fecha de hoy por defecto
+    document.getElementById('fechaAdmin').valueAsDate = new Date();
 </script>
 </body>
 </html>
