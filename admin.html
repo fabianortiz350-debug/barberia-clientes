@@ -3,42 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Dueño | Master Barber</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Panel Master Barber</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #d4af37; --dark: #0f0f0f; --red: #8e1a1a; }
-        body { font-family: 'Montserrat', sans-serif; background: #121212; margin: 0; padding: 20px; color: white; }
-        .admin-card { max-width: 500px; margin: 20px auto; background: #fff; padding: 25px; border-radius: 15px; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        h2 { text-align: center; color: var(--dark); border-bottom: 3px solid var(--gold); padding-bottom: 10px; text-transform: uppercase; }
-        label { font-weight: bold; display: block; margin-top: 15px; text-transform: uppercase; font-size: 0.8rem; color: #666; }
-        input, select { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 2px solid #ddd; box-sizing: border-box; font-family: inherit; font-size: 1rem; }
+        :root { --gold: #d4af37; --red: #8e1a1a; }
+        body { font-family: 'Montserrat', sans-serif; background: #121212; color: #333; padding: 20px; margin: 0; }
+        .admin-card { max-width: 450px; margin: auto; background: white; padding: 25px; border-radius: 15px; }
+        h2 { text-align: center; border-bottom: 3px solid var(--gold); padding-bottom: 10px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; }
         .grid-horas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
-        .hora-btn { padding: 15px 5px; border: 2px solid #eee; border-radius: 8px; text-align: center; cursor: pointer; font-weight: bold; background: #f9f9f9; transition: 0.3s; }
+        .hora-btn { padding: 15px 5px; border: 2px solid #eee; border-radius: 8px; text-align: center; cursor: pointer; font-weight: bold; background: #f9f9f9; }
         .hora-btn.bloqueada { background: var(--red) !important; color: white !important; border-color: var(--red); }
-        .cliente-info { font-size: 0.7rem; display: block; font-weight: normal; margin-top: 4px; }
-        .leyenda { margin-top: 25px; padding: 10px; background: #eee; border-radius: 8px; font-size: 0.8rem; text-align: center; }
+        .leyenda { margin-top: 20px; font-size: 0.8rem; text-align: center; background: #eee; padding: 10px; border-radius: 8px; }
     </style>
 </head>
 <body>
 
 <div class="admin-card">
     <h2>CONTROL DE CITAS</h2>
-    
-    <label>Seleccionar Barbero</label>
+    <label>Barbero</label>
     <select id="barbero" onchange="cargarEstado()">
         <option value="Fabian Ortiz">Fabian Ortiz</option>
         <option value="Andrés Silva">Andrés Silva</option>
     </select>
 
-    <label>Seleccionar Fecha</label>
+    <label>Fecha</label>
     <input type="date" id="fechaAdmin" onchange="cargarEstado()">
 
     <div class="grid-horas" id="gridAdmin"></div>
-
-    <div class="leyenda">
-        <p>Toca una hora para <b>Bloquear / Liberar</b></p>
-        <span style="color:var(--red)">●</span> Bloqueado/Reservado | <span>○</span> Disponible
-    </div>
+    <div class="leyenda">Toca una hora para bloquearla (Rojo) o liberarla (Gris).</div>
 </div>
 
 <script>
@@ -50,64 +43,40 @@
         const barbero = document.getElementById('barbero').value;
         if(!fecha) return;
 
-        try {
-            const res = await fetch(`${API_URL}/disponibilidad?fecha=${fecha}&barbero=${barbero}`);
-            const data = await res.json();
-            const container = document.getElementById('gridAdmin');
-            container.innerHTML = "";
+        const res = await fetch(`${API_URL}/disponibilidad?fecha=${fecha}&barbero=${barbero}`);
+        const data = await res.json();
+        const container = document.getElementById('gridAdmin');
+        container.innerHTML = "";
+        
+        horasArr.forEach(h => {
+            const div = document.createElement('div');
+            div.className = "hora-btn";
+            div.innerText = h;
             
-            horasArr.forEach(h => {
-                const div = document.createElement('div');
-                div.className = "hora-btn";
-                div.innerText = h;
-                
-                const esOcupada = data.ocupadas.includes(h);
-                const esBloqueada = data.bloqueadas.includes(h);
+            const ocupada = data.ocupadas.includes(h) || data.bloqueadas.includes(h);
+            if(ocupada) div.classList.add('bloqueada');
 
-                if(esOcupada || esBloqueada) {
-                    div.classList.add('bloqueada');
-                    if(esOcupada) {
-                        const span = document.createElement('span');
-                        span.className = "cliente-info";
-                        span.innerText = "RESERVADO";
-                        div.appendChild(span);
-                    }
-                }
-
-                div.onclick = () => toggleBloqueo(h, esBloqueada);
-                container.appendChild(div);
-            });
-        } catch(e) { console.error("Error al cargar"); }
+            div.onclick = () => toggleBloqueo(h, ocupada);
+            container.appendChild(div);
+        });
     }
 
-    async function toggleBloqueo(hora, estaBloqueadaActualmente) {
+    async function toggleBloqueo(hora, estaBloqueada) {
         const fecha = document.getElementById('fechaAdmin').value;
         const barbero = document.getElementById('barbero').value;
-        
-        // Si la hora está "Reservada" por un cliente, mejor no dejar bloquearla desde aquí para no borrar su cita.
-        const estado = estaBloqueadaActualmente ? 'L' : 'B'; 
+        const estado = estaBloqueada ? 'L' : 'B';
 
         try {
-            const response = await fetch(`${API_URL}/admin/bloquear`, {
+            const res = await fetch(`${API_URL}/admin/bloquear`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ fecha, hora, barbero, estado })
             });
-
-            if (response.ok) {
-                cargarEstado(); // Recargar los botones para ver el cambio
-            } else {
-                alert("Error al cambiar el estado de la hora.");
-            }
-        } catch (error) {
-            console.error("Error en la petición:", error);
-            alert("No se pudo conectar con el servidor.");
-        }
+            if(res.ok) cargarEstado();
+        } catch(e) { alert("Error de conexión"); }
     }
 
-    // Configurar fecha inicial
-    const hoy = new Date().toISOString().split('T')[0];
-    document.getElementById('fechaAdmin').value = hoy;
+    document.getElementById('fechaAdmin').valueAsDate = new Date();
     cargarEstado();
 </script>
 </body>
