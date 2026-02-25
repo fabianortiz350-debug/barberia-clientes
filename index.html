@@ -15,7 +15,6 @@
         body { 
             font-family: 'Montserrat', sans-serif; 
             margin: 0; 
-            /* AQUÍ ESTÁ TU FOTO DE FONDO ACLARADA */
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
                         url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
@@ -26,33 +25,15 @@
             flex-direction: column;
         }
         
-        header {
-            padding: 60px 20px;
-            text-align: center;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
-        }
-
-        header h1 { 
-            font-size: 3.5rem; 
-            margin: 0; 
-            letter-spacing: 6px; 
-            font-weight: 900; 
-            color: var(--white);
-            text-transform: uppercase;
-        }
-
-        header p { 
-            color: var(--gold); 
-            font-weight: 700; 
-            letter-spacing: 5px; 
-            font-size: 1.3rem;
-        }
+        header { padding: 60px 20px; text-align: center; text-shadow: 3px 3px 6px rgba(0,0,0,0.8); }
+        header h1 { font-size: 3.2rem; margin: 0; letter-spacing: 6px; font-weight: 900; color: var(--white); text-transform: uppercase; }
+        header p { color: var(--gold); font-weight: 700; letter-spacing: 5px; font-size: 1.2rem; margin-top: 10px; }
 
         .booking-card {
             max-width: 450px;
             margin: 0 auto 50px;
-            background: var(--glass); /* Efecto cristal suave */
-            backdrop-filter: blur(10px);
+            background: var(--glass);
+            backdrop-filter: blur(12px);
             border-radius: 30px;
             padding: 35px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
@@ -60,84 +41,39 @@
         }
 
         .section-title {
-            text-align: center;
-            font-weight: 900;
-            color: #111;
-            text-transform: uppercase;
-            margin-bottom: 25px;
-            border-bottom: 3px solid var(--gold);
-            padding-bottom: 8px;
+            text-align: center; font-weight: 900; color: #111;
+            text-transform: uppercase; margin-bottom: 25px;
+            border-bottom: 3px solid var(--gold); padding-bottom: 8px;
         }
 
         label { font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: #444; margin-bottom: 8px; display: block; }
         
         input, select {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 18px;
-            border: 2px solid #ddd;
-            border-radius: 12px;
-            font-family: inherit;
-            font-size: 1rem;
-            box-sizing: border-box;
+            width: 100%; padding: 14px; margin-bottom: 18px;
+            border: 2px solid #ddd; border-radius: 12px;
+            font-family: inherit; font-size: 1rem; box-sizing: border-box;
         }
 
-        .time-slots {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
+        .time-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
         .slot {
-            padding: 12px 5px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 800;
-            cursor: pointer;
-            background: white;
-            transition: 0.3s;
+            padding: 12px 5px; border: 2px solid #eee; border-radius: 10px;
+            text-align: center; font-weight: 800; cursor: pointer;
+            background: white; transition: 0.3s;
         }
 
-        .slot.selected {
-            background: #111 !important;
-            color: var(--gold) !important;
-            border-color: var(--gold);
-            transform: scale(1.05);
-        }
-
-        .slot.disabled {
-            background: #f0f0f0;
-            color: #ccc;
-            text-decoration: line-through;
-            border-color: #eee;
-        }
+        .slot.selected { background: #111 !important; color: var(--gold) !important; border-color: var(--gold); transform: scale(1.05); }
+        .slot.disabled { background: #f0f0f0; color: #ccc; text-decoration: line-through; border-color: #eee; }
 
         .btn-confirm {
-            width: 100%;
-            background: #111;
-            color: var(--gold);
-            padding: 20px;
-            border: 2px solid var(--gold);
-            border-radius: 15px;
-            font-weight: 900;
-            font-size: 1.1rem;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: 0.3s;
+            width: 100%; background: #111; color: var(--gold); padding: 20px;
+            border: 2px solid var(--gold); border-radius: 15px;
+            font-weight: 900; font-size: 1.1rem; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
         }
 
-        .btn-confirm:hover {
-            background: var(--gold);
-            color: black;
-        }
+        .btn-confirm:hover { background: var(--gold); color: black; }
 
-        @media (max-width: 500px) {
-            header h1 { font-size: 2.5rem; }
-            .booking-card { margin: 0 15px 40px; }
-        }
+        @media (max-width: 500px) { header h1 { font-size: 2.2rem; } .booking-card { margin: 0 15px 40px; } }
     </style>
 </head>
 <body>
@@ -156,7 +92,7 @@
         <option value="Andrés Silva">Andrés Silva</option>
     </select>
 
-    <label>Día</label>
+    <label>Seleccionar Fecha</label>
     <input type="date" id="fecha" onchange="updateSchedule()">
 
     <label>Horas Disponibles</label>
@@ -164,7 +100,7 @@
 
     <label>Tu Información</label>
     <input type="text" id="nombre" placeholder="Nombre completo">
-    <input type="tel" id="telefono" placeholder="WhatsApp">
+    <input type="tel" id="telefono" placeholder="Teléfono de Contacto">
 
     <button class="btn-confirm" onclick="enviarReserva()">Confirmar Cita</button>
 </div>
@@ -184,48 +120,4 @@
             const container = document.getElementById('timeSlots');
             container.innerHTML = "";
             
-            const horas = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"];
-            
-            horas.forEach(h => {
-                const div = document.createElement('div');
-                div.className = "slot";
-                div.innerText = h;
-                if(data.ocupadas.includes(h) || data.bloqueadas.includes(h)) {
-                    div.classList.add('disabled');
-                } else {
-                    div.onclick = function() {
-                        document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
-                        div.classList.add('selected');
-                        timeSelected = h;
-                    };
-                }
-                container.appendChild(div);
-            });
-        } catch(e) { console.error("Error"); }
-    }
-
-    async function enviarReserva() {
-        const nombre = document.getElementById('nombre').value;
-        const fecha = document.getElementById('fecha').value;
-        if(!fecha || !timeSelected || !nombre) return alert("Completa los datos");
-
-        const res = await fetch(`${API_URL}/reservar`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                clienteNombre: nombre,
-                clienteTelefono: document.getElementById('telefono').value,
-                barbero: document.getElementById('barbero').value,
-                fecha: fecha,
-                hora: timeSelected
-            })
-        });
-
-        if(res.ok) {
-            alert("✅ ¡Cita Agendada!");
-            location.reload();
-        }
-    }
-</script>
-</body>
-</html>
+            const horas = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:3
