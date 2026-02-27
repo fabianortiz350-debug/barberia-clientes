@@ -14,62 +14,44 @@
             background-size: cover; background-position: center; background-attachment: fixed;
             min-height: 100vh; display: flex; flex-direction: column;
         }
-        header { padding: 50px 20px; text-align: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); }
-        header h1 { font-size: 3rem; margin: 0; letter-spacing: 5px; font-weight: 900; }
-        header p { color: var(--gold); font-weight: 700; letter-spacing: 4px; margin-top: 5px; }
-        
+        header { padding: 40px 20px; text-align: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); }
         .booking-card {
-            max-width: 450px; margin: 0 auto 50px; background: var(--glass);
-            backdrop-filter: blur(15px); border-radius: 30px; padding: 35px;
-            box-shadow: 0 20px 45px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.3);
-            box-sizing: border-box;
+            max-width: 420px; margin: 0 auto 50px; background: var(--glass);
+            backdrop-filter: blur(10px); border-radius: 25px; padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.3);
         }
-        .section-title { text-align: center; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; border-bottom: 3px solid var(--gold); padding-bottom: 10px; color: #111; }
-        label { font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: #444; margin-top: 15px; display: block; }
-        input, select { width: 100%; padding: 14px; margin-top: 5px; border: 1px solid #ccc; border-radius: 12px; font-family: inherit; font-size: 1rem; box-sizing: border-box; }
-        
+        .section-title { text-align: center; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; border-bottom: 3px solid var(--gold); padding-bottom: 8px; }
+        label { font-weight: 800; font-size: 0.7rem; text-transform: uppercase; color: #444; margin-top: 15px; display: block; }
+        input, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 10px; font-family: inherit; box-sizing: border-box; }
         .grid-horas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .slot { padding: 15px 5px; border: 2px solid #eee; border-radius: 12px; text-align: center; font-weight: 800; cursor: pointer; background: white; transition: 0.3s; }
-        .slot.selected { background: #111 !important; color: var(--gold) !important; border-color: var(--gold); transform: translateY(-2px); }
-        .slot.disabled { background: #f0f0f0; color: #ccc; text-decoration: line-through; cursor: not-allowed; border-color: #eee; }
-        
+        .slot { padding: 12px 5px; border: 1px solid #ddd; border-radius: 8px; text-align: center; font-weight: 800; cursor: pointer; background: white; transition: 0.2s; }
+        .slot.selected { background: #111 !important; color: var(--gold) !important; border-color: var(--gold); }
+        .slot.disabled { background: #eee; color: #bbb; text-decoration: line-through; cursor: not-allowed; }
         .btn-confirm { 
-            width: 100%; background: #111; color: var(--gold); padding: 20px; border: 2px solid var(--gold); 
-            border-radius: 15px; font-weight: 900; margin-top: 30px; cursor: pointer; text-transform: uppercase;
-            font-size: 1.1rem; letter-spacing: 1px; transition: 0.3s;
+            width: 100%; background: #111; color: var(--gold); padding: 18px; border: 2px solid var(--gold); 
+            border-radius: 12px; font-weight: 900; margin-top: 25px; cursor: pointer; text-transform: uppercase;
         }
-        .btn-confirm:hover { background: var(--gold); color: black; }
-
-        @media (max-width: 500px) { header h1 { font-size: 2.4rem; } .booking-card { margin: 0 15px 40px; padding: 25px; } }
     </style>
 </head>
 <body>
-
     <header>
         <h1>MASTER BARBER</h1>
-        <p>ESTILO & DISTINCIÓN</p>
+        <p style="color:var(--gold); font-weight:700; letter-spacing:3px;">ESTILO & DISTINCIÓN</p>
     </header>
-
     <div class="booking-card">
         <div class="section-title">Reserva tu Cupo VIP</div>
-
         <label>Barbero</label>
-        <select id="barbero">
+        <select id="barbero" onchange="cargarHoras()">
             <option value="Fabian Ortiz">Fabian Ortiz</option>
             <option value="Andrés Silva">Andrés Silva</option>
         </select>
-
         <label>Seleccionar Fecha</label>
         <input type="date" id="fechaSeleccionada" onchange="cargarHoras()">
-
         <label>Horas Disponibles</label>
-        <div class="grid-horas" id="contenedorHoras">
-            </div>
-
+        <div class="grid-horas" id="contenedorHoras"></div>
         <label>Tu Información</label>
         <input type="text" id="nombreCliente" placeholder="Nombre completo">
         <input type="tel" id="telefonoCliente" placeholder="Teléfono de Contacto">
-
         <button class="btn-confirm" onclick="confirmar()">Confirmar Cita VIP</button>
     </div>
 
@@ -77,7 +59,6 @@
     let horaElegida = "";
     const URL_API = "https://mis-barberias.onrender.com";
 
-    // Función para cargar las horas desde el servidor
     async function cargarHoras() {
         const fecha = document.getElementById('fechaSeleccionada').value;
         const barbero = document.getElementById('barbero').value;
@@ -94,8 +75,6 @@
                 const div = document.createElement('div');
                 div.className = "slot";
                 div.innerText = h;
-                
-                // Si la hora está ocupada o bloqueada por el admin
                 if(data.ocupadas.includes(h) || data.bloqueadas.includes(h)) {
                     div.classList.add('disabled');
                 } else {
@@ -107,21 +86,17 @@
                 }
                 contenedor.appendChild(div);
             });
-        } catch(e) { 
-            console.error("Error cargando disponibilidad");
-        }
+        } catch(e) { console.error("Error cargando"); }
     }
 
-    // Función principal para GUARDAR la reserva
     async function confirmar() {
         const nombre = document.getElementById('nombreCliente').value;
         const fecha = document.getElementById('fechaSeleccionada').value;
         const tel = document.getElementById('telefonoCliente').value;
         const barbero = document.getElementById('barbero').value;
 
-        // Validación básica
         if(!fecha || !horaElegida || !nombre) {
-            return alert("⚠️ Por favor, selecciona una fecha, una hora y escribe tu nombre.");
+            return alert("Faltan datos por completar.");
         }
 
         try {
@@ -129,27 +104,16 @@
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    clienteNombre: nombre,
-                    clienteTelefono: tel,
-                    barbero: barbero,
-                    fecha: fecha,
-                    hora: horaElegida
+                    clienteNombre: nombre, clienteTelefono: tel,
+                    barbero: barbero, fecha: fecha, hora: horaElegida
                 })
             });
-
             if(res.ok) {
-                alert("✅ ¡Cita agendada con éxito! Te esperamos.");
-                location.reload(); // Recarga para limpiar los campos
-            } else {
-                alert("❌ No se pudo guardar la reserva. Revisa la conexión.");
-            }
-        } catch(e) {
-            alert("📡 Error al conectar con el servidor. Inténtalo de nuevo.");
-        }
+                alert("✅ ¡Cita agendada con éxito!");
+                location.reload();
+            } else { alert("Error al guardar"); }
+        } catch(e) { alert("Error de conexión con el servidor"); }
     }
-
-    // Al cambiar de barbero, que también se actualicen las horas
-    document.getElementById('barbero').addEventListener('change', cargarHoras);
 </script>
 </body>
 </html>
