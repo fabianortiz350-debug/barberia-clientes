@@ -30,4 +30,126 @@
         
         .grid-horas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
         .slot { padding: 15px 5px; border: 2px solid #eee; border-radius: 12px; text-align: center; font-weight: 800; cursor: pointer; background: white; transition: 0.3s; }
-        .slot.selected { background: #111 !important; color
+        .slot.selected { background: #111 !important; color: var(--gold) !important; border-color: var(--gold); transform: translateY(-2px); }
+        .slot.disabled { background: #f0f0f0; color: #ccc; text-decoration: line-through; cursor: not-allowed; border-color: #eee; }
+        
+        .btn-confirm { 
+            width: 100%; background: #111; color: var(--gold); padding: 20px; border: 2px solid var(--gold); 
+            border-radius: 15px; font-weight: 900; margin-top: 30px; cursor: pointer; text-transform: uppercase;
+            font-size: 1.1rem; letter-spacing: 1px; transition: 0.3s;
+        }
+        .btn-confirm:hover { background: var(--gold); color: black; }
+
+        @media (max-width: 500px) { header h1 { font-size: 2.4rem; } .booking-card { margin: 0 15px 40px; padding: 25px; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>MASTER BARBER</h1>
+        <p>ESTILO & DISTINCIÓN</p>
+    </header>
+
+    <div class="booking-card">
+        <div class="section-title">Reserva tu Cupo VIP</div>
+
+        <label>Barbero</label>
+        <select id="barbero">
+            <option value="Fabian Ortiz">Fabian Ortiz</option>
+            <option value="Andrés Silva">Andrés Silva</option>
+        </select>
+
+        <label>Seleccionar Fecha</label>
+        <input type="date" id="fechaSeleccionada" onchange="cargarHoras()">
+
+        <label>Horas Disponibles</label>
+        <div class="grid-horas" id="contenedorHoras">
+            </div>
+
+        <label>Tu Información</label>
+        <input type="text" id="nombreCliente" placeholder="Nombre completo">
+        <input type="tel" id="telefonoCliente" placeholder="Teléfono de Contacto">
+
+        <button class="btn-confirm" onclick="confirmar()">Confirmar Cita VIP</button>
+    </div>
+
+<script>
+    let horaElegida = "";
+    const URL_API = "https://mis-barberias.onrender.com";
+
+    // Función para cargar las horas desde el servidor
+    async function cargarHoras() {
+        const fecha = document.getElementById('fechaSeleccionada').value;
+        const barbero = document.getElementById('barbero').value;
+        if(!fecha) return;
+
+        try {
+            const res = await fetch(`${URL_API}/disponibilidad?fecha=${fecha}&barbero=${barbero}`);
+            const data = await res.json();
+            const lista = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"];
+            const contenedor = document.getElementById('contenedorHoras');
+            contenedor.innerHTML = "";
+            
+            lista.forEach(h => {
+                const div = document.createElement('div');
+                div.className = "slot";
+                div.innerText = h;
+                
+                // Si la hora está ocupada o bloqueada por el admin
+                if(data.ocupadas.includes(h) || data.bloqueadas.includes(h)) {
+                    div.classList.add('disabled');
+                } else {
+                    div.onclick = () => {
+                        document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+                        div.classList.add('selected');
+                        horaElegida = h;
+                    };
+                }
+                contenedor.appendChild(div);
+            });
+        } catch(e) { 
+            console.error("Error cargando disponibilidad");
+        }
+    }
+
+    // Función principal para GUARDAR la reserva
+    async function confirmar() {
+        const nombre = document.getElementById('nombreCliente').value;
+        const fecha = document.getElementById('fechaSeleccionada').value;
+        const tel = document.getElementById('telefonoCliente').value;
+        const barbero = document.getElementById('barbero').value;
+
+        // Validación básica
+        if(!fecha || !horaElegida || !nombre) {
+            return alert("⚠️ Por favor, selecciona una fecha, una hora y escribe tu nombre.");
+        }
+
+        try {
+            const res = await fetch(`${URL_API}/reservar`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    clienteNombre: nombre,
+                    clienteTelefono: tel,
+                    barbero: barbero,
+                    fecha: fecha,
+                    hora: horaElegida
+                })
+            });
+
+            if(res.ok) {
+                alert("✅ ¡Cita agendada con éxito! Te esperamos.");
+                location.reload(); // Recarga para limpiar los campos
+            } else {
+                alert("❌ No se pudo guardar la reserva. Revisa la conexión.");
+            }
+        } catch(e) {
+            alert("📡 Error al conectar con el servidor. Inténtalo de nuevo.");
+        }
+    }
+
+    // Al cambiar de barbero, que también se actualicen las horas
+    document.getElementById('barbero').addEventListener('change', cargarHoras);
+</script>
+</body>
+</html>
