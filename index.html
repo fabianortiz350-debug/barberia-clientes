@@ -63,14 +63,12 @@
         const fecha = document.getElementById('fechaSeleccionada').value;
         const barbero = document.getElementById('barbero').value;
         if(!fecha) return;
-
         try {
             const res = await fetch(`${URL_API}/disponibilidad?fecha=${fecha}&barbero=${barbero}`);
             const data = await res.json();
             const lista = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"];
             const contenedor = document.getElementById('contenedorHoras');
             contenedor.innerHTML = "";
-            
             lista.forEach(h => {
                 const div = document.createElement('div');
                 div.className = "slot";
@@ -86,7 +84,7 @@
                 }
                 contenedor.appendChild(div);
             });
-        } catch(e) { console.error("Error cargando"); }
+        } catch(e) { console.error("Error cargando horas"); }
     }
 
     async function confirmar() {
@@ -95,9 +93,7 @@
         const tel = document.getElementById('telefonoCliente').value;
         const barbero = document.getElementById('barbero').value;
 
-        if(!fecha || !horaElegida || !nombre) {
-            return alert("Faltan datos por completar.");
-        }
+        if(!fecha || !horaElegida || !nombre) return alert("Faltan datos");
 
         try {
             const res = await fetch(`${URL_API}/reservar`, {
@@ -108,11 +104,22 @@
                     barbero: barbero, fecha: fecha, hora: horaElegida
                 })
             });
+
             if(res.ok) {
-                alert("✅ ¡Cita agendada con éxito!");
+                // Generar Link de Google Calendar
+                const [aaaa, mm, dd] = fecha.split('-');
+                const [hh, min] = horaElegida.split(':');
+                const start = `${aaaa}${mm}${dd}T${hh}${min}00`;
+                const end = `${aaaa}${mm}${dd}T${parseInt(hh)+1}${min}00`;
+                const gUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=Cita+Master+Barber&dates=${start}/${end}&details=Barbero:+${barbero}&sf=true&output=xml`;
+
+                alert("✅ ¡Cita agendada!");
+                if(confirm("¿Quieres añadirla a tu Google Calendar?")) {
+                    window.open(gUrl, '_blank');
+                }
                 location.reload();
-            } else { alert("Error al guardar"); }
-        } catch(e) { alert("Error de conexión con el servidor"); }
+            }
+        } catch(e) { alert("Error de conexión"); }
     }
 </script>
 </body>
