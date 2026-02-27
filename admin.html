@@ -3,120 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Gestión | Master Barber</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Admin | Master Barber</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --gold: #d4af37; 
-            --white: #ffffff;
-            --red-vip: #8e1a1a;
-            --glass: rgba(255, 255, 255, 0.95);
-        }
-
+        :root { --gold: #d4af37; --red: #8e1a1a; --glass: rgba(255, 255, 255, 0.95); }
         body { 
-            font-family: 'Montserrat', sans-serif; 
-            margin: 0; 
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                        url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            min-height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif; margin: 0;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover; background-attachment: fixed;
+            min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;
         }
-
-        .admin-card {
-            max-width: 480px; margin: 40px auto;
-            background: var(--glass); backdrop-filter: blur(12px);
-            border-radius: 30px; padding: 35px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.4); color: #111;
-        }
-
+        .admin-card { width: 100%; max-width: 420px; background: var(--glass); backdrop-filter: blur(10px); border-radius: 25px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.3); color: #111; }
         h2 { text-align: center; font-weight: 900; text-transform: uppercase; border-bottom: 3px solid var(--gold); padding-bottom: 10px; }
-        label { font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: #555; margin-top: 15px; display: block; }
-
-        input, select {
-            width: 100%; padding: 14px; margin-top: 5px;
-            border: 2px solid #ddd; border-radius: 12px;
-            font-family: inherit; font-size: 1rem; box-sizing: border-box;
-        }
-
-        .grid-horas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 25px; }
-        .hora-btn {
-            padding: 15px 5px; border: 2px solid #eee; border-radius: 12px;
-            text-align: center; font-weight: 800; cursor: pointer;
-            background: white; transition: 0.3s;
-        }
-
-        .hora-btn.bloqueada { background: var(--red-vip) !important; color: white !important; border-color: var(--red-vip); }
-        .leyenda { margin-top: 30px; padding: 15px; background: rgba(0,0,0,0.05); border-radius: 15px; font-size: 0.8rem; text-align: center; }
+        label { font-weight: 800; font-size: 0.75rem; text-transform: uppercase; display: block; margin-top: 20px; color: #444; }
+        input, select { width: 100%; padding: 14px; margin-top: 5px; border-radius: 12px; border: 1px solid #ccc; font-family: inherit; font-size: 1rem; box-sizing: border-box; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 25px; }
+        .btn { padding: 15px 5px; border: 2px solid #eee; border-radius: 12px; text-align: center; font-weight: 800; cursor: pointer; background: white; transition: 0.3s; }
+        .btn.bloqueada { background: var(--red) !important; color: white; border-color: var(--red); box-shadow: 0 4px 8px rgba(142,26,26,0.3); }
+        .leyenda { margin-top: 25px; font-size: 0.75rem; text-align: center; background: rgba(0,0,0,0.05); padding: 12px; border-radius: 10px; font-weight: 600; }
     </style>
 </head>
 <body>
-
-<div class="admin-card">
-    <h2>Gestión de Agenda</h2>
-    
-    <label>Barbero</label>
-    <select id="barbero" onchange="cargarEstado()">
-        <option value="Fabian Ortiz">Fabian Ortiz</option>
-        <option value="Andrés Silva">Andrés Silva</option>
-    </select>
-
-    <label>Seleccionar Fecha</label>
-    <input type="date" id="fechaAdmin" onchange="cargarEstado()">
-
-    <div class="grid-horas" id="gridAdmin"></div>
-
-    <div class="leyenda">
-        <span style="color:var(--red-vip)">●</span> Rojo: Bloqueado / Reservado<br>
-        <span style="color:#ddd">○</span> Blanco: Disponible
+    <div class="admin-card">
+        <h2>GESTIÓN DE AGENDA</h2>
+        <label>Barbero</label>
+        <select id="barberoAdmin" onchange="cargarAdmin()">
+            <option value="Fabian Ortiz">Fabian Ortiz</option>
+            <option value="Andrés Silva">Andrés Silva</option>
+        </select>
+        <label>Seleccionar Fecha</label>
+        <input type="date" id="fechaAdmin" onchange="cargarAdmin()">
+        <div class="grid" id="gridAdmin"></div>
+        <div class="leyenda">Toca una hora para Bloquear (Rojo) o Liberar (Blanco)</div>
     </div>
-</div>
 
 <script>
-    const API_URL = "https://mis-barberias.onrender.com";
-    const horasArr = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"];
+    const API = "https://mis-barberias.onrender.com";
+    const horas = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"];
 
-    async function cargarEstado() {
+    async function cargarAdmin() {
         const fecha = document.getElementById('fechaAdmin').value;
-        const barbero = document.getElementById('barbero').value;
+        const barbero = document.getElementById('barberoAdmin').value;
         if(!fecha) return;
-
         try {
-            const res = await fetch(`${API_URL}/disponibilidad?fecha=${fecha}&barbero=${barbero}`);
+            const res = await fetch(`${API}/disponibilidad?fecha=${fecha}&barbero=${barbero}`);
             const data = await res.json();
             const container = document.getElementById('gridAdmin');
             container.innerHTML = "";
-            
-            horasArr.forEach(h => {
+            horas.forEach(h => {
                 const div = document.createElement('div');
-                div.className = "hora-btn";
+                div.className = "btn";
                 div.innerText = h;
-                const bloqueada = data.bloqueadas.includes(h) || data.ocupadas.includes(h);
-                if(bloqueada) div.classList.add('bloqueada');
-                div.onclick = () => toggleBloqueo(h, data.bloqueadas.includes(h));
+                const estaB = data.bloqueadas.includes(h);
+                const estaO = data.ocupadas.includes(h);
+                if(estaB || estaO) div.classList.add('bloqueada');
+                div.onclick = () => toggle(h, estaB);
                 container.appendChild(div);
             });
-        } catch(e) { console.error("Error"); }
+        } catch(e) { console.error("Error cargando datos"); }
     }
 
-    async function toggleBloqueo(hora, estaBloqueada) {
-        const fecha = document.getElementById('fechaAdmin').value;
-        const barbero = document.getElementById('barbero').value;
-        const estado = estaBloqueada ? 'L' : 'B';
-        await fetch(`${API_URL}/admin/bloquear`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fecha, hora, barbero, estado })
-        });
-        cargarEstado();
+    async function toggle(h, estaB) {
+        try {
+            const res = await fetch(`${API}/admin/bloquear`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    fecha: document.getElementById('fechaAdmin').value,
+                    barbero: document.getElementById('barberoAdmin').value,
+                    hora: h, estado: estaB ? 'L' : 'B'
+                })
+            });
+            if(res.ok) cargarAdmin();
+        } catch(e) { alert("Error al conectar"); }
     }
-
     document.getElementById('fechaAdmin').valueAsDate = new Date();
-    cargarEstado();
+    cargarAdmin();
 </script>
 </body>
 </html>
