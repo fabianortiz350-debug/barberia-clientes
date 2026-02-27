@@ -57,23 +57,35 @@
 
 <script>
     let horaElegida = "";
+    // Asegúrate de que esta URL sea la correcta de tu servicio Render
     const URL_API = "https://mis-barberias.onrender.com";
 
     async function cargarHoras() {
         const fecha = document.getElementById('fechaSeleccionada').value;
         const barbero = document.getElementById('barbero').value;
         if(!fecha) return;
+
+        const contenedor = document.getElementById('contenedorHoras');
+        contenedor.innerHTML = "Cargando...";
+
         try {
             const res = await fetch(`${URL_API}/disponibilidad?fecha=${fecha}&barbero=${barbero}`);
+            if(!res.ok) throw new Error("Error en servidor");
+            
             const data = await res.json();
             const lista = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"];
-            const contenedor = document.getElementById('contenedorHoras');
+            
             contenedor.innerHTML = "";
             lista.forEach(h => {
                 const div = document.createElement('div');
                 div.className = "slot";
                 div.innerText = h;
-                if(data.ocupadas.includes(h) || data.bloqueadas.includes(h)) {
+                
+                // Aseguramos que data.ocupadas y data.bloqueadas existan
+                const ocupadas = data.ocupadas || [];
+                const bloqueadas = data.bloqueadas || [];
+                
+                if(ocupadas.includes(h) || bloqueadas.includes(h)) {
                     div.classList.add('disabled');
                 } else {
                     div.onclick = () => {
@@ -84,7 +96,10 @@
                 }
                 contenedor.appendChild(div);
             });
-        } catch(e) { console.error("Error cargando horas"); }
+        } catch(e) { 
+            console.error(e);
+            contenedor.innerHTML = "Error cargando horas";
+        }
     }
 
     async function confirmar() {
@@ -93,17 +108,24 @@
         const tel = document.getElementById('telefonoCliente').value;
         const barbero = document.getElementById('barbero').value;
 
-        if(!fecha || !horaElegida || !nombre) return alert("Faltan datos");
+        if(!fecha || !horaElegida || !nombre || !tel) {
+            return alert("⚠️ Faltan datos: Nombre, Teléfono, Fecha y Hora son obligatorios.");
+        }
 
         try {
             const res = await fetch(`${URL_API}/reservar`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    clienteNombre: nombre, clienteTelefono: tel,
-                    barbero: barbero, fecha: fecha, hora: horaElegida
+                    clienteNombre: nombre,                
+                    clienteTelefono: tel,
+                    barbero: barbero,
+                    fecha: fecha,
+                    hora: horaElegida
                 })
             });
+
+            const data = await res.json();
 
             if(res.ok) {
                 // Generar Link de Google Calendar
@@ -118,10 +140,14 @@
                     window.open(gUrl, '_blank');
                 }
                 location.reload();
+            } else {
+                alert("❌ Error: " + (data.error || "No se pudo agendar la cita"));
             }
-        } catch(e) { alert("Error de conexión"); }
+        } catch(e) { 
+            console.error(e);
+            alert("❌ Error de conexión con el servidor.");
+        }
     }
 </script>
 </body>
 </html>
-
